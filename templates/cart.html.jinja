@@ -1,0 +1,40 @@
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Product</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+        <th scope="col">Total</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart_items %}
+        <tr>
+          <th scope="row">{{ loop.index }}</th>
+          <td>{{ item.name }}</td>
+          <td>
+            <input type="number" class="form-control" value="{{ item.quantity }}" min="1" id="quantity-{{ item.id }}">
+          </td>
+          <td>${{ '%.2f' % item.price }}</td>
+          <td>${{ '%.2f' % item.total_price }}</td>
+          <td>
+            <button class="btn btn-danger" onclick="removeItem({{ item.id }})">Remove</button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="d-flex justify-content-between">
+  <h5>Total: ${{ '%.2f' % total_price }}</h5>
+  <button class="btn btn-primary">Proceed to Checkout</button>
+</div>
+
+<script>
+  function removeItem(itemId) {
+    alert('Removing item ' + itemId);
+  }
+</script>
