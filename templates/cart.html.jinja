@@ -16,25 +16,89 @@
           <th scope="row">{{ loop.index }}</th>
           <td>{{ item.name }}</td>
           <td>
-            <input type="number" class="form-control" value="{{ item.quantity }}" min="1" id="quantity-{{ item.id }}">
+            <input type="number" class="form-control" value="{{ item.quantity }}" min="1" id="quantity-{{ item.id }}" onchange="updateQuantity({{ item.id }})">
           </td>
           <td>${{ '%.2f' % item.price }}</td>
-          <td>${{ '%.2f' % item.total_price }}</td>
+          <td id="total-price-{{ item.id }}" class="item-total">${{ '%.2f' % item.total_price }}</td>
           <td>
-            <button class="btn btn-danger" onclick="removeItem({{ item.id }})">Remove</button>
+            <button class="btn btn-danger" onclick="removeItem({{ item.id }})"><i class="fas fa-trash-alt"></i> Remove</button>
+            <button class="btn btn-secondary" onclick="saveForLater({{ item.id }})">Save for Later</button>
+            <button class="btn btn-warning" onclick="markOutOfStock({{ item.id }})">Out of Stock</button>
           </td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
+
 <div class="d-flex justify-content-between">
-  <h5>Total: ${{ '%.2f' % total_price }}</h5>
+  <h5>Total: $<span id="cart-total">${{ '%.2f' % total_price }}</span></h5>
+  <div>
+    <input type="text" id="discount-code" class="form-control" placeholder="Discount Code">
+    <button class="btn btn-success" onclick="applyDiscount()">Apply Discount</button>
+  </div>
   <button class="btn btn-primary">Proceed to Checkout</button>
+  <button class="btn btn-warning" onclick="clearCart()">Clear Cart</button>
 </div>
 
 <script>
+
+  function updateQuantity(itemId) {
+    const quantity = document.getElementById('quantity-' + itemId).value;
+    const price = parseFloat('{{ item.price }}'); 
+    const totalPrice = price * quantity;
+
+ 
+    document.getElementById('total-price-' + itemId).innerText = '$' + totalPrice.toFixed(2);
+
+
+    updateCartTotal();
+  }
+
+
+  function updateCartTotal() {
+    let newTotal = 0;
+    document.querySelectorAll('.item-total').forEach(item => {
+      newTotal += parseFloat(item.innerText.replace('$', ''));
+    });
+
+
+    document.getElementById('cart-total').innerText = '$' + newTotal.toFixed(2);
+  }
+
+
   function removeItem(itemId) {
-    alert('Removing item ' + itemId);
+    const confirmation = confirm('Are you sure you want to remove this item from the cart?');
+    if (confirmation) {
+      alert('Removing item ' + itemId);
+
+    }
+  }
+
+ 
+  function saveForLater(itemId) {
+    alert('Saving item ' + itemId + ' for later.');
+  
+  }
+
+  function markOutOfStock(itemId) {
+    alert('Marking item ' + itemId + ' as out of stock.');
+  }
+
+  function clearCart() {
+    const confirmation = confirm('Are you sure you want to clear the entire cart?');
+    if (confirmation) {
+      alert('Clearing the cart');
+    }
+  }
+
+  function applyDiscount() {
+    const discountCode = document.getElementById('discount-code').value;
+    if (discountCode) {
+      alert('Applying discount code ' + discountCode);
+      
+    } else {
+      alert('Please enter a valid discount code.');
+    }
   }
 </script>
